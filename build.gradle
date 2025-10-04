@@ -1,0 +1,60 @@
+plugins {
+    id 'java'
+}
+
+def javaPath = file(System.getenv("%JAVA_HOME%"))
+def distDir = file("$buildDir/distribution")
+def libDir = file("$distDir/lib")
+def binDir = file("$distDir/bin")
+
+tasks.register("copyLibs", Copy) {
+    from configurations.runtimeClasspath
+    into(libDir)
+}
+
+tasks.register("copyJRE", Copy) {
+    from javaPath
+    into binDir
+}
+
+tasks.register('createScripts') {
+    doLast {
+        def startBat = file("$distDir/start.bat")
+        startBat.text = """
+@echo off
+set JAVA_BIN=%~dp0bin\\bin\\java.exe
+if not exist "%JAVA_BIN%" (
+    echo Java runtime not found in bin folder!
+    pause
+    exit /b
+)
+"%JAVA_BIN%" -jar "%~dp0tetris-cli.jar"
+"""
+    }
+}
+
+tasks.register('assembleApp') {
+    group = "build"
+    description = "Builds a project that is immediately available for running"
+
+    dependsOn jar, 'copyLibs', 'copyJRE', 'createScripts'
+
+    doLast {
+        copy {
+            from jar.archiveFile
+            into distDir
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'splitque.tetris.Tetris'
+        )
+    }
+}
