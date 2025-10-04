@@ -34,8 +34,6 @@ public class Tetris {
     }
 
     void main() throws IOException {
-        Files.createFile(Path.of("log.txt"));
-
         Frame welcomeFrame = new Frame(40, 4);
         getBorder(welcomeFrame, 40, 4);
 
