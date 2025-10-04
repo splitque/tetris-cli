@@ -117,9 +117,6 @@ public class Tetris {
 
                             switch (i) {
                                 case 0: {
-                                    try {
-                                        Files.writeString(Path.of("log.txt"), "0");
-                                    } catch (IOException e) { }
                                     for (int j = 0; j <= 2; j++) {
                                         mainObject.registerObject(new GameObject(mainObject, '#', x, y));
                                         y++;
