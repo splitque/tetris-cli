@@ -64,5 +64,6 @@ public class EventManager {
         keyboardEvents.clear();
         jframe.setVisible(false);
         jframe.dispose();
+        scheduler.shutdownNow();
     }
 }

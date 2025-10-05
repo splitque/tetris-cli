@@ -5,9 +5,6 @@ import splitque.tetris.events.ScheduleEvent;
 import splitque.tetris.objects.GameObject;
 import splitque.tetris.objects.Tag;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -33,7 +30,7 @@ public class Tetris {
         }
     }
 
-    void main() throws IOException {
+    void main() {
         Frame welcomeFrame = new Frame(40, 4);
         getBorder(welcomeFrame, 40, 4);
 
@@ -104,7 +101,36 @@ public class Tetris {
                         if (inactiveObject.haveObjects()) {
                             for (GameObject obj : inactiveObject.getObjects()) {
                                 if (obj.getY() < 3) {
-                                    System.exit(1);
+                                    Frame endFrame = new Frame(15, 4);
+
+                                    Tag endText = new Tag(endFrame, "Text");
+                                    String endStr = "You lose!";
+                                    int p = 2;
+                                    for (int i = 0; i < endStr.length(); i++) {
+                                        endFrame.registerObject(new GameObject(endText, endStr.charAt(i), p, 1));
+                                        p++;
+                                    }
+                                    p = 2;
+
+                                    Tag end = new Tag(endFrame, "Play");
+                                    String endKey = "(Space) Close";
+                                    for (int i = 0; i < endKey.length(); i++) {
+                                        endFrame.registerObject(new GameObject(end, endKey.charAt(i), p, 3));
+                                        p++;
+                                    }
+                                    p = 0;
+
+
+
+                                    endFrame.registerKeyboardEvent(new KeyboardEvent(endFrame, 'p') {
+                                        @Override
+                                        public void handleEvent() {
+                                            System.exit(0);
+                                        }
+                                    });
+
+                                    Renderer.render(endFrame);
+                                    gameFrame.close();
                                 }
                             }
                         }
