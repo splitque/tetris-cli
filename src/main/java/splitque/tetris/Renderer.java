@@ -1,6 +1,7 @@
 package splitque.tetris;
 
 import splitque.tetris.objects.GameObject;
+import splitque.tetris.objects.ObjectComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,14 +13,14 @@ public final class Renderer {
     public synchronized static void render(Frame frame) {
         for (int y = 0; y <= frame.getMaxY(); y++) {
             for (int x = 0; x <= frame.getMaxX(); x++) {
-                GameObject object = null;
-                for (GameObject gameObject : frame.getObjects()) {
-                    if (gameObject.getY() == y && gameObject.getX() == x) {
-                        object = gameObject;
+                ObjectComponent targetComponent = null;
+                for (ObjectComponent component : frame.getAllComponents()) {
+                    if (component.getY() == y && component.getX() == x) {
+                        targetComponent = component;
                         break;
                     }
                 }
-                if (object != null) SB.append(object.getCharacter());
+                if (targetComponent != null) SB.append(targetComponent.getCharacter());
                 else SB.append(" ");
             }
             LIST.add(SB.toString());

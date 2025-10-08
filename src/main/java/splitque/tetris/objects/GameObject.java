@@ -1,43 +1,40 @@
 package splitque.tetris.objects;
 
-public class GameObject {
-    private final Tag tag;
-    private char character;
-    private int x;
-    private int y;
+import lombok.Getter;
+import splitque.tetris.ITransformable;
+import splitque.tetris.Transform;
 
-    public GameObject(Tag tag, char character, int x, int y) {
-        this.tag = tag;
-        this.character = character;
-        this.x = x;
-        this.y = y;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+public abstract class GameObject implements ITransformable {
+    @Getter
+    private final List<ObjectComponent> components = new CopyOnWriteArrayList<>();
+
+    public GameObject(int x, int y) { }
+
+    public void registerComponent(ObjectComponent component) {
+        components.add(component);
     }
 
-    public Tag getTag() {
-        return tag;
+    @Override
+    public void set(int X, int Y) {
+        for (ObjectComponent component : components) {
+            component.set(X, Y);
+        }
     }
 
-    public char getCharacter() {
-        return character;
+    @Override
+    public void add(int X, int Y) {
+        for (ObjectComponent component : components) {
+            component.add(X, Y);
+        }
     }
 
-    public void setCharacter(char character) {
-        this.character = character;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
+    @Override
+    public void sub(int X, int Y) {
+        for (ObjectComponent component : components) {
+            component.sub(X, Y);
+        }
     }
 }

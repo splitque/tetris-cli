@@ -1,18 +1,18 @@
 package splitque.tetris.events;
 
+import lombok.Getter;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
-public class EventManager {
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private final List<KeyboardEvent> keyboardEvents = new CopyOnWriteArrayList<>();
+public final class EventManager {
+    @Getter
+    private static final EventManager instance = new EventManager();
+    private final List<Event> events = new CopyOnWriteArrayList<>();
     private JFrame jframe;
 
     public EventManager() {
@@ -38,7 +38,7 @@ public class EventManager {
 
                 @Override
                 public void keyReleased(KeyEvent e) {
-                    handleKeyboardEvent(e.getKeyChar());
+                    handleEvent(e.getKeyChar());
                 }
             });
         }, "Event-Thread");
@@ -46,24 +46,17 @@ public class EventManager {
         thread.start();
     }
 
-    public void registerKeyboardEvent(KeyboardEvent keyboardEvent) {
-        keyboardEvents.add(keyboardEvent);
+    public void registerEvent(Event event) {
+        events.add(event);
     }
 
-    public void registerScheduleEvent(ScheduleEvent scheduleEvent) {
-        scheduler.scheduleAtFixedRate(scheduleEvent::handleEvent, 0, scheduleEvent.getPeriod(), TimeUnit.SECONDS);
-    }
-
-    public void handleKeyboardEvent(char c) {
-        for (KeyboardEvent e : keyboardEvents) {
+    public void handleEvent(char c) {
+        for (Event e : events) {
             if (e.getCharacter() == c) e.handleEvent();
         }
     }
 
-    public void close() {
-        keyboardEvents.clear();
-        jframe.setVisible(false);
-        jframe.dispose();
-        scheduler.shutdownNow();
+    public void clear() {
+        events.clear();
     }
 }

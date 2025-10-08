@@ -1,69 +1,58 @@
 package splitque.tetris;
 
-import splitque.tetris.events.KeyboardEvent;
+import lombok.Getter;
+import splitque.tetris.events.Event;
 import splitque.tetris.events.EventManager;
-import splitque.tetris.events.ScheduleEvent;
 import splitque.tetris.objects.GameObject;
-import splitque.tetris.objects.Tag;
+import splitque.tetris.objects.ObjectComponent;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Frame {
-    private final EventManager eventManager = new EventManager();
-    private final Set<GameObject> objects = new HashSet<>();
-    private final Set<Tag> tags = new HashSet<>();
+public abstract class Frame implements AutoCloseable {
+    @Getter
+    private final List<GameObject> objects = new CopyOnWriteArrayList<>();
+    @Getter
     private final int maxX;
+    @Getter
     private final int maxY;
+    @Getter
+    private boolean closed = false;
 
     public Frame(int maxX, int maxY) {
         this.maxX = maxX;
         this.maxY = maxY;
     }
 
+    public void start() {
+        while (!closed) {
+            loop();
+        }
+    }
+
+    public abstract void loop();
+
     public void registerObject(GameObject object) {
-        tags.add(object.getTag());
         objects.add(object);
     }
 
-    public void deleteObject(GameObject object) {
-        objects.remove(object);
+    public void registerEvent(Event event) {
+        EventManager.getInstance().registerEvent(event);
     }
 
-    public void registerObjects(Tag tag) {
-        tags.add(tag);
-        if (tag.haveObjects()) objects.addAll(tag.getObjects());
+    public List<ObjectComponent> getAllComponents() {
+        List<ObjectComponent> components = new ArrayList<>();
+        for (GameObject object : objects) {
+            components.addAll(object.getComponents());
+        }
+        return components;
     }
 
-    public void registerKeyboardEvent(KeyboardEvent keyboardEvent) {
-        eventManager.registerKeyboardEvent(keyboardEvent);
-    }
-
-    public void registerScheduleEvent(ScheduleEvent scheduleEvent) {
-        eventManager.registerScheduleEvent(scheduleEvent);
-    }
-
+    @Override
     public void close() {
-        eventManager.close();
         objects.clear();
-        tags.clear();
-    }
-
-    public int getMaxX() {
-        return maxX;
-    }
-
-    public int getMaxY() {
-        return maxY;
-    }
-
-    public Set<GameObject> getObjects() {
-        return objects;
-    }
-
-    public Set<Tag> getTags() {
-        return tags;
+        EventManager.getInstance().clear();
+        closed = true;
     }
 }
