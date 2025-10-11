@@ -5,8 +5,6 @@ import splitque.tetris.objects.ObjectComponent;
 
 public class HorizontalBorderWithTitle extends GameObject {
     public HorizontalBorderWithTitle(int x, int y, String title) {
-        super(x, y);
-
         boolean border = true;
 
         int midX = x / 2;

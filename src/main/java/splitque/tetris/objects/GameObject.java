@@ -2,7 +2,6 @@ package splitque.tetris.objects;
 
 import lombok.Getter;
 import splitque.tetris.ITransformable;
-import splitque.tetris.Transform;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -10,8 +9,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public abstract class GameObject implements ITransformable {
     @Getter
     private final List<ObjectComponent> components = new CopyOnWriteArrayList<>();
-
-    public GameObject(int x, int y) { }
 
     public void registerComponent(ObjectComponent component) {
         components.add(component);

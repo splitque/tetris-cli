@@ -26,6 +26,7 @@ public abstract class Frame implements AutoCloseable {
     }
 
     public void start() {
+        Renderer.render(this);
         while (!closed) {
             loop();
         }
